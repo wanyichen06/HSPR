@@ -1,0 +1,36 @@
+cff-version: 1.2.0
+message: "If you use HSPR, please cite the paper below."
+title: HSPR
+type: software
+repository-code: https://github.com/wanyichen06/HSPR
+url: https://arxiv.org/abs/2610.24611
+authors:
+  - family-names: Chen
+    given-names: Wanyi
+  - family-names: Shen
+    given-names: Wanqin
+  - family-names: Shi
+    given-names: Yuanchen
+  - family-names: Sun
+    given-names: Zhensu
+  - family-names: Kong
+    given-names: Fang
+license: MIT
+preferred-citation:
+  type: article
+  title: "HSPR: Recovering Software-Agent Benchmark Scores via Hierarchical Posterior Inference"
+  authors:
+    - family-names: Chen
+      given-names: Wanyi
+    - family-names: Shen
+      given-names: Wanqin
+    - family-names: Shi
+      given-names: Yuanchen
+    - family-names: Sun
+      given-names: Zhensu
+    - family-names: Kong
+      given-names: Fang
+  journal: arXiv
+  year: 2026
+  doi: 10.48550/arXiv.2610.24611
+  url: https://arxiv.org/abs/2610.24611

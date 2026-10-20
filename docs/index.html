@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HSPR — Recovering Software-Agent Benchmark Scores</title>
+  <meta name="description" content="HSPR estimates software-agent benchmark scores from fewer task executions through hierarchical posterior inference and adaptive task selection.">
+  <link rel="canonical" href="https://wanyichen06.github.io/HSPR/">
+  <meta name="citation_title" content="HSPR: Recovering Software-Agent Benchmark Scores via Hierarchical Posterior Inference">
+  <meta name="citation_author" content="Wanyi Chen">
+  <meta name="citation_author" content="Wanqin Shen">
+  <meta name="citation_author" content="Yuanchen Shi">
+  <meta name="citation_author" content="Zhensu Sun">
+  <meta name="citation_author" content="Fang Kong">
+  <meta name="citation_publication_date" content="2026/10/17">
+  <meta name="citation_doi" content="10.48550/arXiv.2610.24611">
+  <meta name="citation_pdf_url" content="https://arxiv.org/pdf/2610.24611">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="HSPR: Recovering Software-Agent Benchmark Scores">
+  <meta property="og:description" content="Estimate full-benchmark scores with adaptive task queries and hierarchical posterior inference. Official paper and code.">
+  <meta property="og:url" content="https://wanyichen06.github.io/HSPR/">
+  <meta property="og:image" content="https://wanyichen06.github.io/HSPR/assets/hspr-method.png">
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+  <link rel="stylesheet" href="static/css/hspr.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "headline": "HSPR: Recovering Software-Agent Benchmark Scores via Hierarchical Posterior Inference",
+    "name": "HSPR: Recovering Software-Agent Benchmark Scores via Hierarchical Posterior Inference",
+    "datePublished": "2026-10-17",
+    "identifier": "10.48550/arXiv.2610.24611",
+    "url": "https://arxiv.org/abs/2610.24611",
+    "mainEntityOfPage": "https://wanyichen06.github.io/HSPR/",
+    "sameAs": ["https://github.com/wanyichen06/HSPR"],
+    "author": [
+      {"@type": "Person", "name": "Wanyi Chen", "affiliation": {"@type": "Organization", "name": "Soochow University"}},
+      {"@type": "Person", "name": "Wanqin Shen", "affiliation": {"@type": "Organization", "name": "Soochow University"}},
+      {"@type": "Person", "name": "Yuanchen Shi", "affiliation": {"@type": "Organization", "name": "Soochow University"}},
+      {"@type": "Person", "name": "Zhensu Sun", "affiliation": {"@type": "Organization", "name": "Singapore Management University"}},
+      {"@type": "Person", "name": "Fang Kong", "affiliation": {"@type": "Organization", "name": "Soochow University"}}
+    ]
+  }
+  </script>
+  <script src="static/hspr.js" defer></script>
+</head>
+<body class="lang-zh">
+  <a class="skip-link" href="#main"><span lang="zh">跳到正文</span><span lang="en">Skip to content</span></a>
+  <header class="site-header">
+    <nav class="page-width site-nav" aria-label="Main navigation">
+      <a class="wordmark" href="#main">HSPR<span class="wordmark-dot">.</span></a>
+      <div class="nav-links">
+        <a href="#method"><span lang="zh">方法</span><span lang="en">Method</span></a>
+        <a href="#results"><span lang="zh">结果</span><span lang="en">Results</span></a>
+        <a href="#reproduce"><span lang="zh">运行</span><span lang="en">Run</span></a>
+        <button id="language-toggle" class="language-toggle" type="button" aria-label="Switch language">EN / 中文</button>
+      </div>
+    </nav>
+  </header>
+  <main id="main">
+    <section class="page-width introduction">
+      <p class="eyebrow">arXiv · 2026</p>
+      <h1><span class="method-name">HSPR</span><span class="paper-title">Recovering Software-Agent Benchmark Scores<br class="desktop-break"> via Hierarchical Posterior Inference</span></h1>
+      <p class="lead"><span lang="zh">少跑一些题，估计整个测试集的得分。</span><span lang="en">Fewer task executions. An estimate of the whole benchmark.</span></p>
+      <p class="hero-description"><span lang="zh">从历史 Agent 的成绩中学习题目之间的联系。每观察一个新结果，就更新判断、选择下一题，逐步恢复新 Agent 的完整得分。</span><span lang="en">Learn task relationships from historical agents. Update uncertainty after each observed outcome, choose the next task, and recover the new agent’s full-benchmark score.</span></p>
+      <p class="authors">Wanyi Chen¹ · Wanqin Shen¹ · Yuanchen Shi¹ · Zhensu Sun² · Fang Kong¹†</p>
+      <p class="affiliations">¹ Soochow University &nbsp; ² Singapore Management University<br><span lang="zh">† 通讯作者</span><span lang="en">† Corresponding author</span></p>
+      <div class="hero-links">
+        <a class="button primary-link" href="https://arxiv.org/abs/2610.24611"><span lang="zh">阅读论文 ↗</span><span lang="en">Read the paper ↗</span></a>
+        <a class="button" href="https://github.com/wanyichen06/HSPR"><span lang="zh">开源代码 ↗</span><span lang="en">Code on GitHub ↗</span></a>
+        <a class="button" href="#citation"><span lang="zh">引用 / BibTeX</span><span lang="en">Cite / BibTeX</span></a>
+      </div>
+      <div class="facts" aria-label="Study overview">
+        <div><strong>10%</strong><span lang="zh">主实验的题目预算</span><span lang="en">task budget in the main experiment</span></div>
+        <div><strong>4</strong><span lang="zh">个 SWE-bench 系列题库</span><span lang="en">SWE-bench task banks</span></div>
+        <div><strong>CPU</strong><span lang="zh">NumPy + SciPy 评估器</span><span lang="en">NumPy + SciPy evaluator</span></div>
+      </div>
+    </section>
+
+    <section class="page-width content-section" id="method">
+      <p class="eyebrow"><span lang="zh">问题与方法</span><span lang="en">The problem &amp; the method</span></p>
+      <h2><span lang="zh">跑少量题，如何知道完整得分？</span><span lang="en">How much can a few outcomes tell us?</span></h2>
+      <p class="section-intro"><span lang="zh">题目的难度和相关性各不相同，少量题的平均成绩可能偏离完整测试集。历史成绩提供线索：哪些题具有相近的响应模式，以及这些模式对新 Agent 还有多大不确定性。</span><span lang="en">Tasks differ in difficulty and dependence, so a small subset’s average can miss the full score. Historical responses reveal shared patterns; HSPR also models uncertainty about how those patterns transfer to a new agent.</span></p>
+      <div class="steps">
+        <article><span class="step-number">01</span><h3><span lang="zh">学习历史结构</span><span lang="en">Learn historical structure</span></h3><p><span lang="zh">拟合整体响应因素，并将历史成绩完全相同的题分组。组内题共享一个带有不确定性的成功率。</span><span lang="en">Fit response factors and group tasks with identical source-response signatures. Tasks in each group share an uncertain success rate.</span></p></article>
+        <article><span class="step-number">02</span><h3><span lang="zh">边观察，边选题</span><span lang="en">Observe, update, select</span></h3><p><span lang="zh">观察已选题的结果，更新 Agent 的潜在状态和各组成功率，再决定下一道题。选题与校准设置在 Source 上确定。</span><span lang="en">Observed outcomes update the agent’s latent state and group rates, guiding the next query. Source validation determines acquisition settings and calibration.</span></p></article>
+        <article><span class="step-number">03</span><h3><span lang="zh">估计完整成绩</span><span lang="en">Recover the full score</span></h3><p><span lang="zh">将已观察到的成功数与未运行题目的预测成功数结合，得到完整得分的分布，并输出经过校准的预测中位数。</span><span lang="en">Combine observed successes with predictive success counts for unqueried tasks. Return a source-calibrated median of the full-score posterior.</span></p></article>
+      </div>
+      <figure class="paper-figure">
+        <a href="assets/hspr-method.png"><img src="assets/hspr-method.png" width="1953" height="1075" alt="HSPR: historical response factors and task groups feed a hierarchical target model; adaptive queries update the posterior and yield a full-score estimate." loading="lazy"></a>
+        <figcaption><span lang="zh">论文图 2：历史响应提供因素和分组；逐题观察更新后验，最终恢复完整得分。点击图片可查看原尺寸。</span><span lang="en">Paper Figure 2: historical responses supply factors and groups; sequential observations update the posterior used for full-score recovery. Click to enlarge.</span> <a href="https://arxiv.org/html/2610.24611v1#S3"><span lang="zh">方法详情 ↗</span><span lang="en">Method details ↗</span></a></figcaption>
+      </figure>
+    </section>
+
+    <section class="tinted-section" id="results">
+      <div class="page-width content-section">
+        <p class="eyebrow"><span lang="zh">论文报告结果</span><span lang="en">Results reported in the paper</span></p>
+        <h2><span lang="zh">四个题库，同一任务预算。</span><span lang="en">Four task banks. A matched task budget.</span></h2>
+        <p class="section-intro"><span lang="zh">在 10% 题目预算下，HSPR 的平均绝对误差在四个题库中的三个上最低，最大绝对误差在四个上均最低。Verified 上，ATLAS-port 的平均误差略低。这里比较的是论文中所列方法的点估计。</span><span lang="en">At a 10% task budget, HSPR has the lowest MAE on three banks and the lowest MaxErr on all four among the compared methods. ATLAS-port has slightly lower MAE on Verified. These are point-estimate comparisons.</span></p>
+        <figure class="paper-figure results-figure">
+          <a href="assets/hspr-results.png"><img src="assets/hspr-results.png" width="2000" height="1307" alt="Published 5–20% task-budget curves for Uniform, Stratified, RSL, ATLAS-port, PTA-IRT and HSPR on Lite, Verified, Full and Pro; rows show MAE, Kendall correlation and MaxErr." loading="lazy"></a>
+          <figcaption><span lang="zh">论文图 3：横轴为已观察题目的占比；MAE、MaxErr 越低越好，排名相关性越高越好。HSPR 在 5–20% 预算下沿用 10% 时通过 Source 选定的设置和嵌套选题路径；对照保留各预算已保存的设置。MAE、MaxErr 的单位为百分点。指标先汇总全部 Target 配置，再平均查询种子。</span><span lang="en">Paper Figure 3: task budgets of 5–20%. Lower MAE and MaxErr are better; higher Kendall correlation is better. HSPR keeps its 10% source-selected settings and nested query paths; baselines retain saved budget-specific settings. Errors are in percentage points. Metrics pool target configurations before averaging query seeds.</span></figcaption>
+        </figure>
+        <h3 class="table-title"><span lang="zh">10% 预算下的平均绝对误差（百分点）</span><span lang="en">Mean absolute error at a 10% task budget (pp)</span></h3>
+        <div class="table-scroll" role="region" aria-label="Published MAE results" tabindex="0">
+          <table class="results-table">
+            <thead><tr><th scope="col"><span lang="zh">方法</span><span lang="en">Method</span></th><th scope="col">Lite<br><small>30 / 300</small></th><th scope="col">Verified<br><small>50 / 500</small></th><th scope="col">Full<br><small>229 / 2,294</small></th><th scope="col">Pro<br><small>73 / 730</small></th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Uniform raw</th><td>6.632</td><td>5.482</td><td>2.227</td><td>3.832</td></tr>
+              <tr><th scope="row">Stratified</th><td>4.468</td><td>3.302</td><td>1.636</td><td>3.111</td></tr>
+              <tr><th scope="row">RSL</th><td>4.911</td><td>3.654</td><td>2.277</td><td>4.467</td></tr>
+              <tr><th scope="row">FAQ-port</th><td>6.681</td><td>4.951</td><td>1.807</td><td>5.433</td></tr>
+              <tr><th scope="row">Mid-Range</th><td>18.448</td><td>16.449</td><td>24.709</td><td>22.798</td></tr>
+              <tr><th scope="row">Mid-Range + Ridge <span class="control-label"><span lang="zh">内部对照</span><span lang="en">control</span></span></th><td>4.717</td><td>3.653</td><td>1.532</td><td>3.434</td></tr>
+              <tr><th scope="row">ATLAS-port</th><td>2.689</td><td><strong>1.861</strong></td><td>0.957</td><td>7.736</td></tr>
+              <tr><th scope="row">PTA-IRT</th><td>2.724</td><td>2.177</td><td>2.280</td><td>2.731</td></tr>
+              <tr class="ours-row"><th scope="row">HSPR</th><td><strong>1.927</strong></td><td>1.915</td><td><strong>0.717</strong></td><td><strong>2.098</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="fine-print"><span lang="zh">数值来自论文表 1；列标题为查询数 / 总题数，加粗表示该列最低的点估计。FAQ-port、ATLAS-port 保留论文披露的适配范围。完整的 MaxErr、排名指标和统计检验见论文。</span><span lang="en">Values from paper Table 1. Headers show queried / total tasks; bold marks column-best point estimates. FAQ-port and ATLAS-port retain the adaptations disclosed in the paper. See the paper for MaxErr, rank metrics, and statistical tests.</span> <a href="https://arxiv.org/html/2610.24611v1#S4.T1"><span lang="zh">完整结果 ↗</span><span lang="en">Full results ↗</span></a></p>
+      </div>
+    </section>
+
+    <section class="page-width content-section" id="reproduce">
+      <p class="eyebrow"><span lang="zh">数据与复现</span><span lang="en">Data &amp; reproduction</span></p>
+      <h2><span lang="zh">用保存下来的真实成绩，检验选题与估分。</span><span lang="en">Evaluate the method with recorded task outcomes.</span></h2>
+      <div lang="zh"><p>公开矩阵中的每一行对应一个 Agent 配置，每一列对应一道题；1 为成功，0 为失败。实验从选中位置逐个读取结果，估计完整行的平均成绩。完整 Target 行在估计结束后用于计算误差，因此复现这一过程无需新的 LLM 调用。</p><p>四个题库分别包含 35、70、14、14 个 Agent 配置，使用四折配置级划分。每折 Source 与 Target 配置互不重叠；基础模型或相关 Agent 框架可能共享。HSPR 的模型、选题和校准设置在 Source 上确定，Target 查询使用种子 0–4。主成本单位为不同题目的查询次数。</p></div>
+      <div lang="en"><p>Each row of the public matrix is an agent configuration, each column a task: 1 means success and 0 failure. Queries reveal selected entries sequentially to estimate the complete row’s mean. The full target row is used afterward to measure error. This replay runs without new LLM calls.</p><p>The four banks contain 35, 70, 14, and 14 agent configurations, with four configuration-level folds. Source and target configurations are disjoint within a fold; base models or related scaffolds may be shared. Model settings, acquisition, and calibration are source-selected; HSPR target queries use seeds 0–4. Budgets count distinct queried tasks.</p></div>
+      <div class="example-panel">
+        <div><h3><span lang="zh">一个可运行的小例子</span><span lang="en">A runnable example</span></h3><p><span lang="zh"><code>example.py</code> 使用 8 个历史配置、12 道题的合成数据。观察 4 道题后，输出估计分数 41.7%；完整行的实际分数为 58.3%。这个例子演示数据如何进入估计器；论文的效果来自上面的真实题库实验。</span><span lang="en"><code>example.py</code> uses a synthetic matrix with 8 historical configurations and 12 tasks. Four queries yield an estimate of 41.7%; the complete target row scores 58.3%. This example illustrates the API. The real-bank experiments above provide the performance evidence.</span></p></div>
+        <pre><code>python example.py
+
+Synthetic example
+Queried task indices: [2, 10, 11, 6]
+Estimated full score: 41.7%</code></pre>
+      </div>
+      <h3><span lang="zh">从代码开始</span><span lang="en">Get started</span></h3>
+      <pre class="run-code"><code>git clone https://github.com/wanyichen06/HSPR.git
+cd HSPR
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python example.py
+python smoke_test.py</code></pre>
+      <p><span lang="zh">Python 3.11，NumPy 与 SciPy。真实题库使用 PTA-IRT 的公开数据；README 提供固定数据版本、下载入口和完整运行命令。代码包含核心实现、Source 选参和 16 组论文配置。历史预测和拟合参数快照未随代码发布。</span><span lang="en">Python 3.11, NumPy, and SciPy. The paper banks use PTA-IRT public data; the README links the pinned version and full evaluation commands. The release includes the method, source selection, and 16 paper configurations. Fitted snapshots, raw data, and historical predictions are omitted.</span></p>
+      <p><a class="text-link" href="https://github.com/wanyichen06/HSPR#evaluate-hspr-on-the-published-datasets"><span lang="zh">查看数据准备与复现说明 →</span><span lang="en">Data preparation &amp; evaluation instructions →</span></a></p>
+    </section>
+
+    <section class="tinted-section" id="citation">
+      <div class="page-width content-section">
+        <p class="eyebrow"><span lang="zh">引用</span><span lang="en">Citation</span></p>
+        <div class="citation-heading"><h2><span lang="zh">引用 HSPR</span><span lang="en">Cite HSPR</span></h2><button id="copy-citation" class="button" type="button"><span lang="zh">复制 BibTeX</span><span lang="en">Copy BibTeX</span></button></div>
+        <pre class="citation-code"><code id="bibtex">@article{chen2026hspr,
+  title={HSPR: Recovering Software-Agent Benchmark Scores via Hierarchical Posterior Inference},
+  author={Chen, Wanyi and Shen, Wanqin and Shi, Yuanchen and Sun, Zhensu and Kong, Fang},
+  journal={arXiv preprint arXiv:2610.24611},
+  year={2026},
+  doi={10.48550/arXiv.2610.24611},
+  url={https://arxiv.org/abs/2610.24611}
+}</code></pre>
+        <p id="copy-status" class="fine-print" role="status" aria-live="polite"></p>
+        <p class="fine-print"><a href="citation.bib" download><span lang="zh">下载 BibTeX</span><span lang="en">Download BibTeX</span></a> · <a href="https://github.com/wanyichen06/HSPR/blob/main/CITATION.cff">CITATION.cff</a></p>
+      </div>
+    </section>
+  </main>
+  <footer class="page-width site-footer">
+    <p><span lang="zh">代码：</span><span lang="en">Code: </span><a href="https://github.com/wanyichen06/HSPR/blob/main/LICENSE">MIT</a> · <span lang="zh">论文图：</span><span lang="en">Paper figures: </span><a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></p>
+    <p><span lang="zh">网页基于</span><span lang="en">Website adapted from the </span> <a href="https://github.com/eliahuhorwitz/Academic-project-page-template">Academic Project Page Template</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a></p>
+  </footer>
+</body>
+</html>
